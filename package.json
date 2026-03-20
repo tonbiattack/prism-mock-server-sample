@@ -1,0 +1,13 @@
+{
+  "name": "prism-mock-server-sample",
+  "version": "1.0.0",
+  "description": "Prism を使った OpenAPI モックサーバーのサンプル",
+  "scripts": {
+    "mock": "prism mock openapi.yaml",
+    "mock:verbose": "prism mock openapi.yaml --verbose",
+    "mock:dynamic": "prism mock openapi.yaml --dynamic"
+  },
+  "devDependencies": {
+    "@stoplight/prism-cli": "^5.12.0"
+  }
+}

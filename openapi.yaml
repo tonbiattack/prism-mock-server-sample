@@ -1,0 +1,330 @@
+openapi: 3.0.3
+info:
+  title: Sample Todo API
+  description: Prism モックサーバーのサンプル用 Todo API
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:4010
+
+paths:
+  /todos:
+    get:
+      summary: Todo一覧取得
+      operationId: listTodos
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [open, done]
+          description: ステータスでフィルタリング
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              example:
+                - id: 1
+                  title: "買い物をする"
+                  status: "open"
+                  createdAt: "2026-03-20T09:00:00Z"
+                - id: 2
+                  title: "レポートを書く"
+                  status: "done"
+                  createdAt: "2026-03-19T14:30:00Z"
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Todo'
+
+    post:
+      summary: Todo作成
+      operationId: createTodo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTodoRequest'
+            example:
+              title: "新しいタスク"
+      responses:
+        '201':
+          description: 作成成功
+          content:
+            application/json:
+              example:
+                id: 3
+                title: "新しいタスク"
+                status: "open"
+                createdAt: "2026-03-20T10:00:00Z"
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: バリデーションエラー（必須項目不足など）
+          content:
+            application/json:
+              example:
+                error: "title is required"
+                details:
+                  - field: "title"
+                    message: "must not be empty"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+                message: "Authentication token is missing or invalid"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 権限エラー
+          content:
+            application/json:
+              example:
+                error: "Forbidden"
+                message: "You do not have permission to perform this action"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: ビジネスロジックエラー（処理不可）
+          content:
+            application/json:
+              example:
+                error: "Unprocessable Entity"
+                message: "Todo title exceeds maximum length of 100 characters"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              example:
+                error: "Internal Server Error"
+                message: "An unexpected error occurred. Please try again later."
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /todos/{id}:
+    get:
+      summary: Todo詳細取得
+      operationId: getTodo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              example:
+                id: 1
+                title: "買い物をする"
+                status: "open"
+                createdAt: "2026-03-20T09:00:00Z"
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '401':
+          description: 認証エラー
+          content:
+            application/json:
+              example:
+                error: "Unauthorized"
+                message: "Authentication token is missing or invalid"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 権限エラー
+          content:
+            application/json:
+              example:
+                error: "Forbidden"
+                message: "You do not have permission to access this resource"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 見つからない
+          content:
+            application/json:
+              example:
+                error: "Not Found"
+                message: "Todo with id 999 was not found"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              example:
+                error: "Internal Server Error"
+                message: "An unexpected error occurred. Please try again later."
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    patch:
+      summary: Todoステータス更新
+      operationId: updateTodo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTodoRequest'
+            example:
+              status: "done"
+      responses:
+        '200':
+          description: 更新成功
+          content:
+            application/json:
+              example:
+                id: 1
+                title: "買い物をする"
+                status: "done"
+                createdAt: "2026-03-20T09:00:00Z"
+              schema:
+                $ref: '#/components/schemas/Todo'
+        '400':
+          description: バリデーションエラー
+          content:
+            application/json:
+              example:
+                error: "Bad Request"
+                message: "status must be one of: open, done"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 見つからない
+          content:
+            application/json:
+              example:
+                error: "Not Found"
+                message: "Todo with id 999 was not found"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: 競合エラー（すでに同じ状態）
+          content:
+            application/json:
+              example:
+                error: "Conflict"
+                message: "Todo is already in 'done' status"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              example:
+                error: "Internal Server Error"
+                message: "An unexpected error occurred. Please try again later."
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Todo削除
+      operationId: deleteTodo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 削除成功
+        '404':
+          description: 見つからない
+          content:
+            application/json:
+              example:
+                error: "Not Found"
+                message: "Todo with id 999 was not found"
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: サーバー内部エラー
+          content:
+            application/json:
+              example:
+                error: "Internal Server Error"
+                message: "An unexpected error occurred. Please try again later."
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    Todo:
+      type: object
+      required:
+        - id
+        - title
+        - status
+        - createdAt
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: "買い物をする"
+        status:
+          type: string
+          enum: [open, done]
+          example: "open"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-03-20T09:00:00Z"
+
+    CreateTodoRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          example: "新しいタスク"
+
+    UpdateTodoRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [open, done]
+          example: "done"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: "Something went wrong"
+        message:
+          type: string
+          example: "Detailed error description"
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
