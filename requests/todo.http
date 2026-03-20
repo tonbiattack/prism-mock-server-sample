@@ -1,0 +1,131 @@
+### VSCode REST Client 用リクエストファイル
+### 拡張機能: REST Client (humao.rest-client) が必要です
+###
+### エラー系レスポンスは Prism の "Prefer: code=XXX" ヘッダーで任意のステータスコードを強制指定できます
+
+@baseUrl = http://localhost:4010
+
+### ========================================
+### 正常系
+### ========================================
+
+### Todo一覧取得（200）
+GET {{baseUrl}}/todos
+Accept: application/json
+
+###
+
+### ステータスフィルタ（200）
+GET {{baseUrl}}/todos?status=open
+Accept: application/json
+
+###
+
+### Todo詳細取得（200）
+GET {{baseUrl}}/todos/1
+Accept: application/json
+
+###
+
+### Todo作成（201）
+POST {{baseUrl}}/todos
+Content-Type: application/json
+
+{
+  "title": "新しいタスク"
+}
+
+###
+
+### ステータス更新（200）
+PATCH {{baseUrl}}/todos/1
+Content-Type: application/json
+
+{
+  "status": "done"
+}
+
+###
+
+### Todo削除（204）
+DELETE {{baseUrl}}/todos/1
+
+###
+
+### ========================================
+### エラー系 - Prefer ヘッダーで強制指定
+### ========================================
+
+### 400 Bad Request - バリデーションエラー
+POST {{baseUrl}}/todos
+Content-Type: application/json
+Prefer: code=400
+
+{
+  "title": "新しいタスク"
+}
+
+###
+
+### 401 Unauthorized - 認証エラー
+GET {{baseUrl}}/todos/1
+Prefer: code=401
+
+###
+
+### 403 Forbidden - 権限エラー
+GET {{baseUrl}}/todos/1
+Prefer: code=403
+
+###
+
+### 404 Not Found - リソース未存在
+GET {{baseUrl}}/todos/1
+Prefer: code=404
+
+###
+
+### 409 Conflict - 競合エラー（PATCHのみ定義）
+PATCH {{baseUrl}}/todos/1
+Content-Type: application/json
+Prefer: code=409
+
+{
+  "status": "done"
+}
+
+###
+
+### 422 Unprocessable Entity - ビジネスロジックエラー（POSTのみ定義）
+POST {{baseUrl}}/todos
+Content-Type: application/json
+Prefer: code=422
+
+{
+  "title": "新しいタスク"
+}
+
+###
+
+### 500 Internal Server Error - サーバーエラー
+GET {{baseUrl}}/todos/1
+Prefer: code=500
+
+###
+
+### 500 Internal Server Error - POST でサーバーエラー
+POST {{baseUrl}}/todos
+Content-Type: application/json
+Prefer: code=500
+
+{
+  "title": "新しいタスク"
+}
+
+###
+
+### 500 Internal Server Error - DELETE でサーバーエラー
+DELETE {{baseUrl}}/todos/1
+Prefer: code=500
+
+###
