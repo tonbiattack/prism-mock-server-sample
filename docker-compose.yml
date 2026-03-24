@@ -1,0 +1,7 @@
+services:
+  mock-server:
+    build: .
+    ports:
+      - "4010:4010"
+    volumes:
+      - ./openapi.yaml:/app/openapi.yaml:ro
