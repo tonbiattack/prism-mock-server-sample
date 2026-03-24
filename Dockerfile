@@ -15,7 +15,7 @@ EXPOSE 4010
 CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "openapi.yaml"]
 
 # ログ詳細表示（リクエスト/レスポンスの詳細ログを表示）
-# CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "--verbose", "openapi.yaml"]
+# CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "--verboseLevel", "debug", "openapi.yaml"]
 
 # ダイナミックモード（schema からランダム値を生成）
 # CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "--dynamic", "openapi.yaml"]

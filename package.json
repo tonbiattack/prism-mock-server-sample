@@ -4,7 +4,7 @@
   "description": "Prism を使った OpenAPI モックサーバーのサンプル",
   "scripts": {
     "mock": "prism mock openapi.yaml",
-    "mock:verbose": "prism mock openapi.yaml --verbose",
+    "mock:verbose": "prism mock openapi.yaml --verboseLevel debug",
     "mock:dynamic": "prism mock openapi.yaml --dynamic"
   },
   "devDependencies": {
