@@ -120,6 +120,27 @@ docker compose up -d --build
 
 起動後は `http://localhost:4010` でアクセスできます。停止は `docker compose down` です。
 
+### 起動モードの切り替え
+
+`Dockerfile` の `CMD` をコメントアウトで切り替えます。使いたいモードの行だけコメントを外して再起動してください。
+
+```dockerfile
+# 通常起動（example の値をそのまま返す）
+CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "openapi.yaml"]
+
+# ログ詳細表示（リクエスト/レスポンスの詳細ログを表示）
+# CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "--verbose", "openapi.yaml"]
+
+# ダイナミックモード（schema からランダム値を生成）
+# CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "--dynamic", "openapi.yaml"]
+```
+
+変更後は再起動してください。
+
+```bash
+docker compose down && docker compose up --build
+```
+
 ### ポートの変更
 
 ホスト側のポートだけ変える場合は `docker-compose.yml` の `ports` を編集します。
