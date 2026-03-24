@@ -208,6 +208,8 @@ paths:
 
 ## モックサーバー起動
 
+### npm で起動する場合
+
 ```bash
 # 通常起動（example の値をそのまま返す）
 npm run mock
@@ -217,6 +219,27 @@ npm run mock:verbose
 
 # ダイナミックモード（スキーマからランダム値を生成）
 npm run mock:dynamic
+```
+
+### Docker で起動する場合
+
+```bash
+docker compose up --build
+```
+
+モードを切り替えたい場合は `Dockerfile` の `CMD` を編集してから再起動します。
+
+```dockerfile
+# 使いたい行のコメントを外して docker compose up --build で再起動する
+
+# 通常起動（example の値をそのまま返す）
+CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "openapi.yaml"]
+
+# ログ詳細表示（リクエスト/レスポンスの詳細ログを表示）
+# CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "--verboseLevel", "debug", "openapi.yaml"]
+
+# ダイナミックモード（schema からランダム値を生成）
+# CMD ["npx", "prism", "mock", "--host", "0.0.0.0", "--dynamic", "openapi.yaml"]
 ```
 
 起動すると `http://localhost:4010` でモックサーバーが立ち上がります。
